@@ -113,6 +113,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file
+      if: inputs.multi_arch == 'true'
       run: |
          mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
 
