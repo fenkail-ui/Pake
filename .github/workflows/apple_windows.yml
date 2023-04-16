@@ -1,4 +1,4 @@
-name: apple x86和通用架构 & windows App
+name: apple x86 or universal & windows App
 on:
   workflow_dispatch:
     inputs:
