@@ -120,9 +120,9 @@ jobs:
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
         
-    - name: build 2 with pake-cli
-      if: inputs.url1 != ''
+    - name: build 2 with pake-cli 
       shell: pwsh
+      if: inputs.url1 != ''
       run: |
         pwsh ./script/build_with_pake_cli.ps1
       env:
