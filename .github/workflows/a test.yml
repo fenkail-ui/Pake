@@ -42,7 +42,7 @@ on:
         type: boolean
         default: true
       multi_arch:
-        description: "[多架构, 可选, macos专用]"
+        description: "[多架构, 可选, 勾选上为arm架构]"
         required: false
         type: boolean
         default: false
