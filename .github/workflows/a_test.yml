@@ -15,6 +15,13 @@ on:
       name:
         description: "[名称]"
         required: true
+      url1:
+        description: "[网址,去掉https://和结尾的/]"
+        required: true
+      name1:
+        description: "[名称]"
+        required: true
+        
       icon:
         description: "[图标, 可选，默认使用网站的图标]"
         required: false
@@ -96,8 +103,9 @@ jobs:
           node_modules/pake-cli/src-tauri/target/
         key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
 
-    - name: build with pake-cli
+    - name: build 1 with pake-cli
       shell: pwsh
+      if: inputs.url != ''
       run: |
         pwsh ./script/build_with_pake_cli.ps1
       env:
@@ -112,10 +120,28 @@ jobs:
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
         
+    - name: build 2 with pake-cli
+      if: inputs.url1 != ''
+      shell: pwsh
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url1 }}
+        NAME: ${{ inputs.name1 }}
+        ICON: https://api.faviconkit.com/${{ inputs.url }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+        
     - name: mv file
       if: inputs.multi_arch == 'true'
       run: |
          mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+   
     - name: Upload archive
       uses: actions/upload-artifact@v3
       with:
