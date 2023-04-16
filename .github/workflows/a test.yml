@@ -81,7 +81,7 @@ jobs:
         npm install pake-cli
         npm list -g pake-cli
         #npm install git+https://github.com/tw93/Pake.git
-        find {{/usr/local/lib/node_modules/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
+        find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
       
     - name: rust cache restore
       uses: actions/cache/restore@v3
