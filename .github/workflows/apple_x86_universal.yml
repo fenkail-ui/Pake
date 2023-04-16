@@ -1,4 +1,4 @@
-name: apple x86和通用架构
+name: apple x86 & universal
 on:
   workflow_dispatch:
     inputs:
