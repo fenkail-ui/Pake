@@ -78,8 +78,9 @@ jobs:
       shell: bash
       run: |
         echo "install pake on local"
-        #npm install pake-cli
-        npm install git+https://github.com/tw93/Pake.git
+        npm install pake-cli
+        #npm install git+https://github.com/tw93/Pake.git
+        find {{/Users/runner/work/Pake/Pake/node_modules/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
       
     - name: rust cache restore
       uses: actions/cache/restore@v3
