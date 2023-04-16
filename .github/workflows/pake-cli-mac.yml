@@ -1,4 +1,4 @@
-name: Build Mac App online
+name: apple x86和通用架构
 on:
   workflow_dispatch:
     inputs:
