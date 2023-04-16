@@ -1,4 +1,4 @@
-name: apple arm 架构
+name: apple arm & x86
 on:
   workflow_dispatch:
     inputs:
