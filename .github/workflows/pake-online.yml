@@ -1,4 +1,4 @@
-name: Build windows App online
+name:apple x86和通用架构 & windows App
 on:
   workflow_dispatch:
     inputs:
