@@ -1,4 +1,4 @@
-name: a test
+name: apple arm 架构
 on:
   workflow_dispatch:
     inputs:
@@ -42,10 +42,10 @@ on:
         type: boolean
         default: true
       multi_arch:
-        description: "[多架构, 可选, 勾选上为arm架构]"
+        description: "[arm架构, 可选，取消为x86]"
         required: false
         type: boolean
-        default: false
+        default: true
       
 
 
