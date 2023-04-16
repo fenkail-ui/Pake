@@ -1,0 +1,212 @@
+name: Build windows App online
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "平台（mac和win均可）"
+        required: true
+        default: "windows-latest"
+        type: choice
+        options:
+        - "windows-latest"
+        - "macos-latest"
+        - "ubuntu-20.04"
+      url:
+        description: "[网址，去掉https://结尾有/也需要去掉，否则报错]"
+        required: true
+      name:
+        description: "[名称]"
+        required: true
+      icon:
+        description: "[图标，可选，默认使用网址自带的图标]"
+        required: false
+      height:
+        description: "[高度，可选]"
+        required: false
+        default: "780"
+      width:
+        description: "[宽度，可选]"
+        required: false
+        default: "1200"
+      transparent:
+        description: "[透明，可选]"
+        required: false
+        type: boolean
+        default: false
+      # fullscreen:
+      #   description: "[全屏，可选]"
+      #   required: false
+      #   type: boolean
+      #   default: false
+      resize:
+        description: "[调整大小，可选]"
+        required: false
+        type: boolean
+        default: true
+      multi_arch:
+        description: "[多架构，可选，仅适用于MacOS]"
+        required: false
+        type: boolean
+        default: false
+      targets:
+        description: "[目标，可选，仅适用于Linux]"
+        required: false
+        default: "deb"
+        type: choice
+        options:
+        - "deb"
+        - "appimage"
+        - "all"
+
+
+jobs:
+  build:
+    name: ${{ inputs.platform }}
+    runs-on: ${{ inputs.platform }}
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: 检出代码库
+      uses: actions/checkout@v2
+
+    - name: 安装 Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 18
+
+    - name: 为ubuntu-20.04安装Rust
+      if: inputs.platform == 'ubuntu-20.04'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+        target: x86_64-unknown-linux-musl
+
+    - name: 为windows-latest安装Rust
+      if: inputs.platform == 'windows-latest'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable-x86_64-msvc
+        profile: minimal
+        override: true
+        target: x86_64-pc-windows-msvc
+      
+    - name: 为windows安装必要软件
+      if: inputs.platform == 'windows-latest'
+      run: |
+        choco install wget curl
+        choco install imagemagick -y
+          refreshenv
+
+    - name: 为macos-latest安装Rust
+      if: inputs.platform == 'macos-latest'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+        target: x86_64-apple-darwin
+
+    - name: install dependencies (ubuntu only)
+      if: inputs.platform == 'ubuntu-20.04'
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: libwebkit2gtk-4.0-dev build-essential curl wget libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev gnome-video-effects gnome-video-effects-extra
+        version: 1.1
+
+    - name: install pake-cli local
+      shell: bash
+      run: |
+        echo "install pake on local" 
+        npm install pake-cli
+        
+        
+    
+    #- name: mac下替换图标
+     # if: inputs.icon == '' &&
+     #     inputs.platform == 'macos-latest'
+     # run: | 
+     #   wget -O /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/icons/icon.icns https://raw.githubusercontent.com/fenkail-ui/Pake/master/src-tauri/icons/icon.icns
+     #   wget https://raw.githubusercontent.com/fenkail-ui/Pake/master/script/png2icns.sh
+      #  chmod +x ./png2icns.sh
+     #   curl -s "https://api.faviconkit.com/${{ inputs.url }}/144" -o icon.png
+     #   ./png2icns.sh icon.png
+     #   mv -f ./icon.icns /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/icons/
+   
+    - name: windows下替换图标
+      if: inputs.icon == '' &&
+          inputs.platform == 'windows-latest' 
+      run: | 
+        npm list -g --depth=0 | Select-String pake-cli
+        cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/512"
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/256" 
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/32"
+        magick convert icon_256.png icon_256.ico
+        magick convert icon_32.png icon_32.ico
+        
+    - name: rust cache restore
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          node_modules/pake-cli/src-tauri/target/
+        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
+
+    - name: build with pake-cli in macos
+      if: inputs.platform == 'macos-latest'
+      shell: pwsh
+      run: |
+        #urls=$(echo ${{ inputs.url }} | sed 's/https:\/\///' | sed 's/\/$//')
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url }}
+        NAME: ${{ inputs.name }}
+        ICON: https://api.faviconkit.com/${{ inputs.url }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+      
+    - name: build with pake-cli in windows
+      if: inputs.platform == 'windows-latest'
+      shell: pwsh
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url }}
+        NAME: ${{ inputs.name }}
+        ICON: ${{ inputs.icon }}
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+
+    - name: Upload archive
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}-${{ inputs.platform }}.zip
+        path: node_modules/pake-cli/output/*
+        retention-days: 3
+
+    - name: rust cache store
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          node_modules/pake-cli/src-tauri/target/
+        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}

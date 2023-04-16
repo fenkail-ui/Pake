@@ -1,0 +1,127 @@
+name: a test
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: "平台（mac专用）"
+        required: true
+        default: "macos-latest"
+        type: choice
+        options:
+        - "macos-latest"
+      url:
+        description: "[网址,去掉https://和结尾的/]"
+        required: true
+      name:
+        description: "[名称]"
+        required: true
+      icon:
+        description: "[图标, 可选，默认使用网站的图标]"
+        required: false
+      height:
+        description: "[高度, 选填]"
+        required: false
+        default: "780"
+      width:
+        description: "[宽度, 选填]"
+        required: false
+        default: "1200"
+      transparent:
+        description: "[透明无标题栏, mac更适用]"
+        required: false
+        type: boolean
+        default: true
+      # fullscreen:
+      #   description: "[FullScreen, Optional]"
+      #   required: false
+      #   type: boolean
+      #   default: false
+      resize:
+        description: "[可调整大小, 可选]"
+        required: false
+        type: boolean
+        default: true
+      multi_arch:
+        description: "[多架构, 可选, macos专用]"
+        required: false
+        type: boolean
+        default: false
+      
+
+
+jobs:
+  build:
+    name: ${{ inputs.platform }}
+    runs-on: ${{ inputs.platform }}
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: install node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 18
+
+    - name: Install Rust for macos-latest
+      if: inputs.platform == 'macos-latest'
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+        target: x86_64-apple-darwin
+
+    - name: install pake-cli local
+      shell: bash
+      run: |
+        echo "install pake on local"
+        #npm install pake-cli
+        npm install git+https://github.com/tw93/Pake.git
+      
+    - name: rust cache restore
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          node_modules/pake-cli/src-tauri/target/
+        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
+
+    - name: build with pake-cli
+      shell: pwsh
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url }}
+        NAME: ${{ inputs.name }}
+        ICON: https://api.faviconkit.com/${{ inputs.url }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+
+    - name: Upload archive
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}-${{ inputs.platform }}.zip
+        path: node_modules/pake-cli/output/*
+        retention-days: 3
+
+    - name: rust cache store
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          node_modules/pake-cli/src-tauri/target/
+        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
