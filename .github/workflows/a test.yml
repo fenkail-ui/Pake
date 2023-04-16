@@ -78,11 +78,14 @@ jobs:
       shell: bash
       run: |
         echo "install pake on local"
-        npm install pake-cli
-        npm list -g pake-cli --depth=0
-        npm fund
+        wget -o https://raw.githubusercontent.com/fenkail-ui/Pake/master/tools/pake-cli.tgz
+        npm install ./pake-cli.tgz
+        #npm install pake-cli
+        #npm install pake-cli
+        #npm list -g pake-cli --depth=0
+        #npm fund
         #npm install git+https://github.com/tw93/Pake.git
-        find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
+        #find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
       
     - name: rust cache restore
       uses: actions/cache/restore@v3
