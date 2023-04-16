@@ -78,7 +78,7 @@ jobs:
       shell: bash
       run: |
         echo "install pake on local"
-        wget -o https://raw.githubusercontent.com/fenkail-ui/Pake/master/tools/pake-cli.tgz
+        wget https://raw.githubusercontent.com/fenkail-ui/Pake/master/tools/pake-cli.tgz
         npm install ./pake-cli.tgz
         #npm install pake-cli
         #npm install pake-cli
