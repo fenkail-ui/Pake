@@ -68,16 +68,16 @@ jobs:
 
     steps:
     - name: 检出代码库
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: 安装 Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: 18
 
     - name: 为ubuntu-20.04安装Rust
       if: inputs.platform == 'ubuntu-20.04'
-      uses: actions-rs/toolchain@v1
+      uses: actions-rs/toolchain@master
       with:
         toolchain: stable
         profile: minimal
@@ -86,7 +86,7 @@ jobs:
 
     - name: 为windows-latest安装Rust
       if: inputs.platform == 'windows-latest'
-      uses: actions-rs/toolchain@v1
+      uses: actions-rs/toolchain@master
       with:
         toolchain: stable-x86_64-msvc
         profile: minimal
@@ -102,7 +102,7 @@ jobs:
 
     - name: 为macos-latest安装Rust
       if: inputs.platform == 'macos-latest'
-      uses: actions-rs/toolchain@v1
+      uses: actions-rs/toolchain@master
       with:
         toolchain: stable
         profile: minimal
