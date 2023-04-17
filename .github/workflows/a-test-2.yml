@@ -253,7 +253,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest.zip
-        path: node_modules/pake-cli/output/all/*
+        path: node_modules/pake-cli/output/*
         retention-days: 3
 
     - name: rust cache store
