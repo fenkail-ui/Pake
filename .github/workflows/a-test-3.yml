@@ -1,0 +1,389 @@
+name: a test 3
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "[网址,必须去掉https://和结尾的/]"
+        required: true
+      name:
+        description: "[名称]"
+        required: true
+      url1:
+        description: "[网址,必须去掉https://和结尾的/]"
+        required: true
+      name1:
+        description: "[名称]"
+        required: true
+      url2:
+        description: "[网址,必须去掉https://和结尾的/]"
+        required: true
+      name2:
+        description: "[名称]"
+        required: true
+        
+     # icon:
+      #  description: "[图标, 可选，默认使用网站的图标]"
+      #  required: false
+      height:
+        description: "[高度, 选填]"
+        required: false
+        default: "780"
+      width:
+        description: "[宽度, 选填]"
+        required: false
+        default: "1200"
+      transparent:
+        description: "[透明无标题栏, mac更适用]"
+        required: false
+        type: boolean
+        default: true
+      # fullscreen:
+      #   description: "[FullScreen, Optional]"
+      #   required: false
+      #   type: boolean
+      #   default: false
+    #  multi_arch:
+     #   description: "[arm架构, 可选，取消为x86]"
+     #   required: false
+     #   type: boolean
+     #   default: true
+      
+
+
+jobs:
+  #build:
+   # name: macos-latest
+    #runs-on: macos-latest
+    #strategy:
+    #  fail-fast: false
+  build:
+    name: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        build: [windows-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: install node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install Rust for macos-latest
+      if: matrix.os == 'macos-latest'
+      uses: actions-rs/toolchain@master
+      with:
+        toolchain: stable
+        profile: minimal
+        override: true
+        target: x86_64-apple-darwin
+
+    - name: 为windows-latest安装Rust
+      if: matrix.os  == 'windows-latest'
+      uses: actions-rs/toolchain@master
+      with:
+        toolchain: stable-x86_64-msvc
+        profile: minimal
+        override: true
+        target: x86_64-pc-windows-msvc
+      
+    - name: 为windows安装必要软件
+      if: matrix.os  == 'windows-latest'
+      run: |
+        choco install wget curl
+        choco install imagemagick -y
+          refreshenv
+
+    - name: install pake-cli local
+      shell: bash
+      run: |
+        echo "install pake on local"
+        #npm install pake-cli
+        #npm install pake-cli
+        #npm list -g pake-cli --depth=0
+        #npm fund  https://github.com/fenkail-ui/pake-bakup.git
+        npm install git+https:github.com/fenkail-ui/pake-bakup.git
+        #find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
+        
+    - name: windows下替换图标
+      if:  matrix.os == 'windows-latest' 
+      run: | 
+        npm list -g --depth=0 | Select-String pake-cli
+        cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/512"
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/256" 
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/32"
+        magick convert icon_256.png icon_256.ico
+        magick convert icon_32.png icon_32.ico
+
+    - name: rust cache restore
+      uses: actions/cache/restore@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          node_modules/pake-cli/src-tauri/target/
+        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
+
+    - name: build 1 with pake-cli apple x86
+      shell: pwsh
+      if: inputs.url != '' && matrix.os == 'macos-latest'
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url }}
+        NAME: ${{ inputs.name }}
+        ICON: https://api.faviconkit.com/${{ inputs.url }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: false
+        TARGETS: ${{ inputs.targets }}
+      
+    - name: build 1 with pake-cli in windows
+      if:  inputs.url != '' && matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url }}
+        NAME: ${{ inputs.name }}
+        ICON: ${{ inputs.icon }}
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+
+    - name: build 2 with pake-cli apple x86
+      shell: pwsh
+      if: inputs.url1 != '' && matrix.os == 'macos-latest'
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url1 }}
+        NAME: ${{ inputs.name1 }}
+        ICON: https://api.faviconkit.com/${{ inputs.url1 }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: false
+        TARGETS: ${{ inputs.targets }}
+
+    - name: windows下替换图标2
+      if:  matrix.os == 'windows-latest' 
+      run: | 
+        npm list -g --depth=0 | Select-String pake-cli
+        cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/512"
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/256" 
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/32"
+        magick convert icon_256.png icon_256.ico
+        magick convert icon_32.png icon_32.ico
+        
+     - name: build 2 with pake-cli in windows
+      if:  inputs.url1 != '' && matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url1 }}
+        NAME: ${{ inputs.name1 }}
+        ICON: ${{ inputs.icon }}
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+    
+    - name: build 3 with pake-cli apple x86
+      shell: pwsh
+      if: inputs.url1 != '' && matrix.os == 'macos-latest'
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url2 }}
+        NAME: ${{ inputs.name2 }}
+        ICON: https://api.faviconkit.com/${{ inputs.url2 }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: false
+        TARGETS: ${{ inputs.targets }}
+
+    - name: windows下替换图标3
+      if:  matrix.os == 'windows-latest' 
+      run: | 
+        npm list -g --depth=0 | Select-String pake-cli
+        cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/512"
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/256" 
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/32"
+        magick convert icon_256.png icon_256.ico
+        magick convert icon_32.png icon_32.ico
+
+     - name: build 3 with pake-cli in windows
+      if:  inputs.url2 != '' && matrix.os == 'windows-latest'
+      shell: pwsh
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url2 }}
+        NAME: ${{ inputs.name2 }}
+        ICON: ${{ inputs.icon }}
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: ${{ inputs.resize }}
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}    
+   
+    - name: build 1 with pake-cli apple arm
+      shell: pwsh
+      if: inputs.url != '' && matrix.os == 'macos-latest'
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url }}
+        NAME: ${{ inputs.name }}
+        ICON: https://api.faviconkit.com/${{ inputs.url }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: true
+        TARGETS: ${{ inputs.targets }}
+      
+    - name: mv file 1
+      if: matrix.os == 'macos-latest'
+      run: |
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
+   
+        
+    - name: build 2 with pake-cli apple arm
+      shell: pwsh
+      if: inputs.url1 != '' && matrix.os == 'macos-latest'
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url1 }}
+        NAME: ${{ inputs.name1 }}
+        ICON: https://api.faviconkit.com/${{ inputs.url1 }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: true
+        TARGETS: ${{ inputs.targets }}
+        
+    - name: mv file 2
+      if: matrix.os == 'macos-latest'
+      run: |
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
+   
+    - name: build 3 with pake-cli apple arm
+      shell: pwsh
+      if: inputs.url1 != '' && matrix.os == 'macos-latest'
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url2 }}
+        NAME: ${{ inputs.name2 }}
+        ICON: https://api.faviconkit.com/${{ inputs.url2 }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: true
+        TARGETS: ${{ inputs.targets }}
+        
+    - name: mv file 3
+      if: matrix.os == 'macos-latest'
+      run: |
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
+   
+    - name: renname
+      if: matrix.os == 'macos-latest'
+      run: |
+        cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
+        mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
+        mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
+        mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
+    
+    - name: 创建release标签
+      id: tag
+      #if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
+        touch release.txt
+        echo "[源码]( )" >> release.txt
+        echo "由衷感谢所有无私奉献的大佬们" >> release.txt
+        echo "📥 软件下载" >> release.txt
+        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [国内NN网盘](${{ steps.cowtransfer.outputs.url }})" >> release.txt
+        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [国外WT网盘](${{ steps.wetransfer.outputs.url }})" >> release.txt
+        echo "::set-output name=status::success"
+    - name: 发布至release
+      uses: softprops/action-gh-release@v1
+    #  if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/* 
+
+    - name: 删除旧的Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+     # if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      with:
+        keep_latest: 9
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+    
+   
+    - name: Upload archive
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest.zip
+        path: node_modules/pake-cli/output/*
+        retention-days: 3
+
+    - name: rust cache store
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          node_modules/pake-cli/src-tauri/target/
+        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
+
+    - name: Delete workflow runs
+      uses: GitRML/delete-workflow-runs@main
+      with:
+        retain_days: 14
+        keep_minimum_runs: 3
