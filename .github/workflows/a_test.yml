@@ -3,19 +3,19 @@ on:
   workflow_dispatch:
     inputs:
       url:
-        description: "[网址,去掉https://和结尾的/]"
+        description: "[网址,必须去掉https://和结尾的/]"
         required: true
       name:
         description: "[名称]"
         required: true
       url1:
-        description: "[网址,去掉https://和结尾的/]"
+        description: "[网址,必须去掉https://和结尾的/]"
         required: true
       name1:
         description: "[名称]"
         required: true
       url2:
-        description: "[网址,去掉https://和结尾的/]"
+        description: "[网址,必须去掉https://和结尾的/]"
         required: true
       name2:
         description: "[名称]"
@@ -168,7 +168,7 @@ jobs:
     - name: Upload archive
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ inputs.name }}-${{ inputs.name1 }}-${{ inputs.name2 }}-macos-latest.zip
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest.zip
         path: node_modules/pake-cli/output/*
         retention-days: 3
 
