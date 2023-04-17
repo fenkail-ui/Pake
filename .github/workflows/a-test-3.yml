@@ -20,10 +20,6 @@ on:
       name2:
         description: "[名称]"
         required: true
-        
-     # icon:
-      #  description: "[图标, 可选，默认使用网站的图标]"
-      #  required: false
       height:
         description: "[高度, 选填]"
         required: false
@@ -37,19 +33,7 @@ on:
         required: false
         type: boolean
         default: true
-      # fullscreen:
-      #   description: "[FullScreen, Optional]"
-      #   required: false
-      #   type: boolean
-      #   default: false
-    #  multi_arch:
-     #   description: "[arm架构, 可选，取消为x86]"
-     #   required: false
-     #   type: boolean
-     #   default: true
       
-
-
 jobs:
   build:
     name: build
