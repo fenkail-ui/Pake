@@ -150,7 +150,7 @@ jobs:
       env:
         URL: ${{ inputs.url2 }}
         NAME: ${{ inputs.name2 }}
-        ICON: https://api.faviconkit.com/${{ inputs.url1 }}/144
+        ICON: https://api.faviconkit.com/${{ inputs.url2 }}/144
         HEIGHT: ${{ inputs.height }}
         WIDTH: ${{ inputs.width }}
         TRANSPARENT: ${{ inputs.transparent }}
