@@ -10,16 +10,16 @@ on:
         required: true
       url1:
         description: "[网址,必须去掉https://和结尾的/]"
-        required: true
+        required: false
       name1:
         description: "[名称]"
-        required: true
+        required: false
       url2:
         description: "[网址,必须去掉https://和结尾的/]"
-        required: true
+        required: false
       name2:
         description: "[名称]"
-        required: true
+        required: false
         
      # icon:
       #  description: "[图标, 可选，默认使用网站的图标]"
@@ -165,7 +165,7 @@ jobs:
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
     - name: Create release
-      id: release
+      id: re-release
       uses: ncipollo/release-action@v1
       with:
         name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest
