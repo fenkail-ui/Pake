@@ -51,7 +51,7 @@ on:
 
 
 jobs:
-   build:
+ build:
     name: build
     runs-on: ${{ matrix.os }}
     strategy:
