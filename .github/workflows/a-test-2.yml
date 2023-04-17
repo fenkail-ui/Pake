@@ -85,7 +85,7 @@ jobs:
         #npm fund  https://github.com/fenkail-ui/pake-bakup.git
         npm install git+https:github.com/fenkail-ui/pake-bakup.git
         #find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
-        mkdir /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all/
+        
        
     - name: rust cache restore
       uses: actions/cache/restore@v3
@@ -118,6 +118,7 @@ jobs:
     - name: mv file 1
      # if: inputs.multi_arch
       run: |
+       mkdir /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all/
        cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
     
     
