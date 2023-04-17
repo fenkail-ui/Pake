@@ -36,7 +36,7 @@ on:
       
 jobs:
   build:
-    name: runos
+    name: build
     strategy:
       matrix:
           os: [windows-latest, macos-latest]
@@ -89,7 +89,7 @@ jobs:
         #find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
         
     - name: windows下替换图标
-      if:  matrix.os == 'windows-latest' 
+      if:  inputs.url != '' && matrix.os == 'windows-latest' 
       run: | 
         npm list -g --depth=0 | Select-String pake-cli
         cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
@@ -162,7 +162,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
 
     - name: windows下替换图标2
-      if:  matrix.os == 'windows-latest' 
+      if:  inputs.url1 != '' && matrix.os == 'windows-latest' 
       run: | 
         npm list -g --depth=0 | Select-String pake-cli
         cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
@@ -207,7 +207,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
 
     - name: windows下替换图标3
-      if:  matrix.os == 'windows-latest' 
+      if:  inputs.url2 != '' && matrix.os == 'windows-latest' 
       run: | 
         npm list -g --depth=0 | Select-String pake-cli
         cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
@@ -252,7 +252,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
       
     - name: mv file 1
-      if: matrix.os == 'macos-latest'
+      if: inputs.url != '' && matrix.os == 'macos-latest'
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
@@ -275,7 +275,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file 2
-      if: matrix.os == 'macos-latest'
+      if: inputs.url1 != '' && matrix.os == 'macos-latest'
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
@@ -297,7 +297,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file 3
-      if: matrix.os == 'macos-latest'
+      if: inputs.url2 != '' && matrix.os == 'macos-latest'
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
@@ -309,37 +309,16 @@ jobs:
         mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
         mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
     
-    - name: 创建release标签
-      id: tag
-      #if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      run: |
-        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
-        touch release.txt
-        echo "[源码]( )" >> release.txt
-        echo "由衷感谢所有无私奉献的大佬们" >> release.txt
-        echo "📥 软件下载" >> release.txt
-        [ $UPLOAD_COWTRANSFER = true ] && echo "🔗 [国内NN网盘](${{ steps.cowtransfer.outputs.url }})" >> release.txt
-        [ $UPLOAD_WETRANSFER = true ] && echo "🔗 [国外WT网盘](${{ steps.wetransfer.outputs.url }})" >> release.txt
-        echo "::set-output name=status::success"
-    - name: 发布至release
-      uses: softprops/action-gh-release@v1
-    #  if: steps.tag.outputs.status == 'success' && !cancelled()
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+    - name: Upload files
+      # arg info: https://github.com/ncipollo/release-action#release-action
+      uses: ncipollo/release-action@v1
       with:
-        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
-        tag_name: ${{ steps.tag.outputs.release_tag }}
-        body_path: release.txt
-        files: /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/* 
-
-    - name: 删除旧的Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-     # if: env.UPLOAD_RELEASE == 'true' && !cancelled()
-      with:
-        keep_latest: 9
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        allowUpdates: true
+        prerelease: ${{ inputs.is_pre_release }}
+        artifacts: "output/*/*.*"
+        tag: ${{ inputs.version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     
    
@@ -359,7 +338,7 @@ jobs:
           ~/.cargo/registry/cache/
           ~/.cargo/git/db/
           node_modules/pake-cli/src-tauri/target/
-        key: ${{ inputs.platform }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
+        key: ${{ matrix.os }}-cargo-${{ hashFiles('node_modules/pake-cli/src-tauri/Cargo.lock') }}
 
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
