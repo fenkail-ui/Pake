@@ -53,11 +53,11 @@ on:
 jobs:
   build:
     name: build
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-latest, macos-latest]
-      fail-fast: false
+      #fail-fast: false
+    runs-on: ${{ matrix.os }}
 
     steps:
     - name: Checkout repository
