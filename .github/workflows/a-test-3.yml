@@ -138,9 +138,9 @@ jobs:
         ICON: ${{ inputs.icon }}
         HEIGHT: ${{ inputs.height }}
         WIDTH: ${{ inputs.width }}
-        TRANSPARENT: ${{ inputs.transparent }}
+        TRANSPARENT: false
         FULLSCREEN: ${{ inputs.fullscreen }}
-        RESIZE: ${{ inputs.resize }}
+        RESIZE: true
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
 
@@ -183,9 +183,9 @@ jobs:
         ICON: ${{ inputs.icon }}
         HEIGHT: ${{ inputs.height }}
         WIDTH: ${{ inputs.width }}
-        TRANSPARENT: ${{ inputs.transparent }}
+        TRANSPARENT: false
         FULLSCREEN: ${{ inputs.fullscreen }}
-        RESIZE: ${{ inputs.resize }}
+        RESIZE: true
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
     
@@ -228,9 +228,9 @@ jobs:
         ICON: ${{ inputs.icon }}
         HEIGHT: ${{ inputs.height }}
         WIDTH: ${{ inputs.width }}
-        TRANSPARENT: ${{ inputs.transparent }}
+        TRANSPARENT: false
         FULLSCREEN: ${{ inputs.fullscreen }}
-        RESIZE: ${{ inputs.resize }}
+        RESIZE: true
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}    
    
