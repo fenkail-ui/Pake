@@ -215,35 +215,35 @@ jobs:
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
-    - name: Create release x86
-      id: release
-      uses: ncipollo/release-action@v1
-      with:
-        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest
-        allowUpdates: true
-        tag: ${{ env.version }}
-        commit: main
-        token: ${{ secrets.RELEASES_TOKEN }}
-        body: |
-           x86 & arm
+   # - name: Create release x86
+   #   id: release
+   #   uses: ncipollo/release-action@v1
+   #   with:
+    #    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest
+    #    allowUpdates: true
+    #    tag: ${{ env.version }}
+     #   commit: main
+     #   token: ${{ secrets.RELEASES_TOKEN }}
+     #   body: |
+     #      x86 & arm
           
-        artifacts: "/Users/runner/work/Pake/Pake/node_modules/pake-cli/output/*.dmg"   
+      #  artifacts: "/Users/runner/work/Pake/Pake/node_modules/pake-cli/output/*.dmg"   
      
    
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      with:
-        keep_latest: 6
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+   # - name: Remove old Releases
+    #  uses: dev-drprasad/delete-older-releases@v0.1.0
+    #  with:
+     #   keep_latest: 6
+     #   delete_tags: true
+     # env:
+      #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    
-    #- name: Upload archive
-     # uses: actions/upload-artifact@v3
-     # with:
-     #   name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest.zip
-      #  path: node_modules/pake-cli/output/*
-      #  retention-days: 3
+    - name: Upload archive
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest.zip
+        path: node_modules/pake-cli/output/*
+        retention-days: 3
 
     - name: rust cache store
       uses: actions/cache/save@v3
