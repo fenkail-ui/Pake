@@ -117,7 +117,7 @@ jobs:
     - name: mv file 1
       if: inputs.multi_arch
       run: |
-         mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
         
     - name: build 2 with pake-cli 
@@ -140,7 +140,7 @@ jobs:
     - name: mv file 2
       if: inputs.multi_arch
       run: |
-         mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
     - name: build 3 with pake-cli 
       shell: pwsh
@@ -162,8 +162,30 @@ jobs:
     - name: mv file 3
       if: inputs.multi_arch
       run: |
-         mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
+    - name: Create release
+      id: release
+      uses: ncipollo/release-action@v1
+      with:
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest
+        allowUpdates: true
+        tag: ${{ env.version }}
+        commit: main
+        token: ${{ secrets.RELEASES_TOKEN }}
+        body: |
+          ${{ inputs.name }}
+          ${{ inputs.name1 }}
+          ${{ inputs.name2 }}
+        artifacts: "/Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg"   
+   
+    - name: Remove old Releases
+      uses: dev-drprasad/delete-older-releases@v0.1.0
+      with:
+        keep_latest: 3
+        delete_tags: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
    
     - name: Upload archive
       uses: actions/upload-artifact@v3
