@@ -162,7 +162,7 @@ jobs:
         TRANSPARENT: ${{ inputs.transparent }}
         FULLSCREEN: ${{ inputs.fullscreen }}
         RESIZE: true
-        MULTI_ARCH: ${{ inputs.multi_arch }}
+        MULTI_ARCH: true
         TARGETS: ${{ inputs.targets }}
       
     - name: mv file 1
@@ -185,7 +185,7 @@ jobs:
         TRANSPARENT: ${{ inputs.transparent }}
         FULLSCREEN: ${{ inputs.fullscreen }}
         RESIZE: true
-        MULTI_ARCH: ${{ inputs.multi_arch }}
+        MULTI_ARCH: true
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file 2
@@ -207,7 +207,7 @@ jobs:
         TRANSPARENT: ${{ inputs.transparent }}
         FULLSCREEN: ${{ inputs.fullscreen }}
         RESIZE: true
-        MULTI_ARCH: ${{ inputs.multi_arch }}
+        MULTI_ARCH: true
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file 3
