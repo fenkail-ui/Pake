@@ -301,15 +301,20 @@ jobs:
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
-    - name: renname
-      if: matrix.os == 'macos-latest'
+    - name: renname1
+      if: matrix.os == 'macos-latest' && inputs.url != ''
       run: |
         cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
-        if: inputs.url != ''
-          mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
-        if: inputs.url1 != ''
+        mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
+    - name: renname2
+      if: matrix.os == 'macos-latest' && inputs.url1 != ''
+      run: |
+        cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
           mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
-        if: inputs.url2 != ''
+    - name: renname3
+      if: matrix.os == 'macos-latest' && inputs.url2 != ''
+      run: |
+        cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
           mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
     
     - name: Upload files
