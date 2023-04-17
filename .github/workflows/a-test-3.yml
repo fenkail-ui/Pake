@@ -10,16 +10,16 @@ on:
         required: true
       url1:
         description: "[网址,必须去掉https://和结尾的/]"
-        required: true
+        required: false
       name1:
         description: "[名称]"
-        required: true
+        required: false
       url2:
         description: "[网址,必须去掉https://和结尾的/]"
-        required: true
+        required: false
       name2:
         description: "[名称]"
-        required: true
+        required: false
       height:
         description: "[高度, 选填]"
         required: false
