@@ -14,6 +14,12 @@ on:
       name1:
         description: "[名称]"
         required: true
+      url2:
+        description: "[网址,去掉https://和结尾的/]"
+        required: true
+      name2:
+        description: "[名称]"
+        required: true
         
      # icon:
       #  description: "[图标, 可选，默认使用网站的图标]"
@@ -36,11 +42,6 @@ on:
       #   required: false
       #   type: boolean
       #   default: false
-      resize:
-        description: "[可调整大小, 可选]"
-        required: false
-        type: boolean
-        default: true
       multi_arch:
         description: "[arm架构, 可选，取消为x86]"
         required: false
@@ -109,7 +110,7 @@ jobs:
         WIDTH: ${{ inputs.width }}
         TRANSPARENT: ${{ inputs.transparent }}
         FULLSCREEN: ${{ inputs.fullscreen }}
-        RESIZE: ${{ inputs.resize }}
+        RESIZE: true
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
       
@@ -132,7 +133,7 @@ jobs:
         WIDTH: ${{ inputs.width }}
         TRANSPARENT: ${{ inputs.transparent }}
         FULLSCREEN: ${{ inputs.fullscreen }}
-        RESIZE: ${{ inputs.resize }}
+        RESIZE: true
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
         
@@ -141,10 +142,33 @@ jobs:
       run: |
          mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
+    - name: build 3 with pake-cli 
+      shell: pwsh
+      if: inputs.url1 != ''
+      run: |
+        pwsh ./script/build_with_pake_cli.ps1
+      env:
+        URL: ${{ inputs.url2 }}
+        NAME: ${{ inputs.name2 }}
+        ICON: https://api.faviconkit.com/${{ inputs.url1 }}/144
+        HEIGHT: ${{ inputs.height }}
+        WIDTH: ${{ inputs.width }}
+        TRANSPARENT: ${{ inputs.transparent }}
+        FULLSCREEN: ${{ inputs.fullscreen }}
+        RESIZE: true
+        MULTI_ARCH: ${{ inputs.multi_arch }}
+        TARGETS: ${{ inputs.targets }}
+        
+    - name: mv file 3
+      if: inputs.multi_arch
+      run: |
+         mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+   
+   
     - name: Upload archive
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ inputs.name }}-${{ inputs.name1 }}-macos-latest.zip
+        name: ${{ inputs.name }}-${{ inputs.name1 }}-${{ inputs.name2 }}-macos-latest.zip
         path: node_modules/pake-cli/output/*
         retention-days: 3
 
