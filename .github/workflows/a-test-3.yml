@@ -305,11 +305,11 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
-        inputs.url != ''
+        if: inputs.url != ''
           mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
-        inputs.url1 != ''
+        if: inputs.url1 != ''
           mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
-        inputs.url2 != ''
+        if: inputs.url2 != ''
           mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
     
     - name: Upload files
