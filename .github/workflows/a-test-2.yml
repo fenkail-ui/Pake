@@ -85,7 +85,8 @@ jobs:
         #npm fund  https://github.com/fenkail-ui/pake-bakup.git
         npm install git+https:github.com/fenkail-ui/pake-bakup.git
         #find {{/Users/runner/hostedtoolcache/node/18.15.0/x64/lib/pake-cli/}} \( -name "package.json" -o -name "cli.js" \) -type f -exec sed -i '' 's/universal-apple-darwin/aarch64-apple-darwin/g' {} +
-      
+        mkdir /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all/
+       
     - name: rust cache restore
       uses: actions/cache/restore@v3
       with:
@@ -113,6 +114,12 @@ jobs:
         RESIZE: true
         MULTI_ARCH: false
         TARGETS: ${{ inputs.targets }}
+        
+    - name: mv file 1
+     # if: inputs.multi_arch
+      run: |
+       cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
+    
     
     - name: build 2 with pake-cli x86
       shell: pwsh
@@ -130,6 +137,12 @@ jobs:
         RESIZE: true
         MULTI_ARCH: false
         TARGETS: ${{ inputs.targets }}
+        
+    - name: mv file 2
+     # if: inputs.multi_arch
+      run: |
+       cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
+    
     
     - name: build 3 with pake-cli x86
       shell: pwsh
@@ -147,6 +160,11 @@ jobs:
         RESIZE: true
         MULTI_ARCH: false
         TARGETS: ${{ inputs.targets }}
+        
+    - name: mv file 3
+     # if: inputs.multi_arch
+      run: |
+       cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
     
     - name: build 1 with pake-cli arm
       shell: pwsh
@@ -168,7 +186,7 @@ jobs:
     - name: mv file 1
      # if: inputs.multi_arch
       run: |
-         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
    
         
     - name: build 2 with pake-cli arm
@@ -191,7 +209,7 @@ jobs:
     - name: mv file 2
       #if: inputs.multi_arch
       run: |
-         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
    
     - name: build 3 with pake-cli arm
       shell: pwsh
@@ -213,7 +231,7 @@ jobs:
     - name: mv file 3
      # if: inputs.multi_arch
       run: |
-         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
    
    # - name: Create release x86
    #   id: release
@@ -242,7 +260,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest.zip
-        path: node_modules/pake-cli/output/*
+        path: node_modules/pake-cli/output/all/*
         retention-days: 3
 
     - name: rust cache store
