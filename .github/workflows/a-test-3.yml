@@ -51,11 +51,6 @@ on:
 
 
 jobs:
-  #build:
-   # name: macos-latest
-    #runs-on: macos-latest
-    #strategy:
-    #  fail-fast: false
    build:
     name: build
     runs-on: ${{ matrix.os }}
