@@ -305,9 +305,12 @@ jobs:
       if: matrix.os == 'macos-latest'
       run: |
         cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
-        mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
-        mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
-        mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
+        inputs.url != ''
+          mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
+        inputs.url1 != ''
+          mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
+        inputs.url2 != ''
+          mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
     
     - name: Upload files
       # arg info: https://github.com/ncipollo/release-action#release-action
