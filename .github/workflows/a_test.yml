@@ -119,6 +119,12 @@ jobs:
         RESIZE: ${{ inputs.resize }}
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
+      
+    - name: mv file 1
+      if: inputs.multi_arch == 'true'
+      run: |
+         mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
+   
         
     - name: build 2 with pake-cli 
       shell: pwsh
@@ -137,7 +143,7 @@ jobs:
         MULTI_ARCH: ${{ inputs.multi_arch }}
         TARGETS: ${{ inputs.targets }}
         
-    - name: mv file
+    - name: mv file 2
       if: inputs.multi_arch == 'true'
       run: |
          mv /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
