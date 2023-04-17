@@ -56,7 +56,7 @@ jobs:
     #runs-on: macos-latest
     #strategy:
     #  fail-fast: false
-  build:
+   build:
     name: build
     runs-on: ${{ matrix.os }}
     strategy:
