@@ -36,10 +36,10 @@ on:
       
 jobs:
   build:
-    name: build
+    name: runos
     strategy:
       matrix:
-        os: [windows-latest, macos-latest]
+          os: [windows-latest, macos-latest]
       #fail-fast: false
     runs-on: ${{ matrix.os }}
 
