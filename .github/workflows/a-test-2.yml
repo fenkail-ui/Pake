@@ -67,7 +67,7 @@ jobs:
         node-version: 18
 
     - name: Install Rust for macos-latest
-      if: inputs.platform == 'macos-latest'
+      #if: inputs.platform == 'macos-latest'
       uses: actions-rs/toolchain@master
       with:
         toolchain: stable
@@ -173,7 +173,7 @@ jobs:
     - name: mv file 1
      # if: inputs.multi_arch
       run: |
-         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
         
     - name: build 2 with pake-cli arm
@@ -196,7 +196,7 @@ jobs:
     - name: mv file 2
       #if: inputs.multi_arch
       run: |
-         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
     - name: build 3 with pake-cli arm
       shell: pwsh
@@ -218,8 +218,15 @@ jobs:
     - name: mv file 3
      # if: inputs.multi_arch
       run: |
-         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/all
+         cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
    
+    - name: renname
+      run: |
+        cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
+        mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
+        mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
+        mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
+    
     - name: 创建release标签
       id: tag
       #if: env.UPLOAD_RELEASE == 'true' && !cancelled()
@@ -252,12 +259,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
-    - name: renname
-      run: |
-        cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
-        mv ${{ inputs.name }}.dmg ${{ inputs.name }}_1.3.0_x64.dmg
-        mv ${{ inputs.name1 }}.dmg ${{ inputs.name1 }}_1.3.0_x64.dmg
-        mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
+    
    
     - name: Upload archive
       uses: actions/upload-artifact@v3
