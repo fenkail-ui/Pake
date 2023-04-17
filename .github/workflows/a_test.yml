@@ -164,28 +164,13 @@ jobs:
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
-    - name: Create release
-      id: re-release
-      uses: ncipollo/release-action@v1
-      with:
-        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-macos-latest
-        allowUpdates: true
-        tag: ${{ env.version }}
-        commit: main
-        token: ${{ secrets.RELEASES_TOKEN }}
-        body: |
-          ${{ inputs.name }}
-          ${{ inputs.name1 }}
-          ${{ inputs.name2 }}
-        artifacts: "/Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg"   
-   
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.1.0
-      with:
-        keep_latest: 3
-        delete_tags: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload firmware to WeTransfer
+      #if: steps.gz.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
+      run: |
+        curl -fsSL git.io/file-transfer | sh
+        ./transfer cow --block 2621440 -s -p 64 --no-progress /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/*.dmg 2>&1 | tee cowtransfer.log
+        echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
+        echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
    
     - name: Upload archive
       uses: actions/upload-artifact@v3
