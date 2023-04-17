@@ -172,7 +172,7 @@ jobs:
         magick convert icon_256.png icon_256.ico
         magick convert icon_32.png icon_32.ico
         
-     - name: build 2 with pake-cli in windows
+    - name: build 2 with pake-cli in windows
       if:  inputs.url1 != '' && matrix.os == 'windows-latest'
       shell: pwsh
       run: |
