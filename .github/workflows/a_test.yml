@@ -138,7 +138,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file 2
-      if: inputs.multi_arch
+      if: inputs.multi_arch && inputs.url1
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
@@ -160,7 +160,7 @@ jobs:
         TARGETS: ${{ inputs.targets }}
         
     - name: mv file 3
-      if: inputs.multi_arch
+      if: inputs.multi_arch && inputs.url2
       run: |
          cp /Users/runner/work/Pake/Pake/node_modules/pake-cli/src-tauri/target/aarch64-apple-darwin/release/bundle/dmg/*.dmg /Users/runner/work/Pake/Pake/node_modules/pake-cli/output
    
@@ -193,7 +193,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: ${{ env.FILE_TIME }} ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/* 
