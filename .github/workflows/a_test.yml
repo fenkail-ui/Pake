@@ -168,7 +168,8 @@ jobs:
       #if: steps.gz.outputs.status == 'success' && env.UPLOAD_COWTRANSFER == 'true' && !cancelled()
       run: |
         curl -fsSL git.io/file-transfer | sh
-        ./transfer cow --progress -s -p 64 /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/*.dmg 2>&1 | tee cowtransfer.log
+        # login to upload
+        ./transfer cow  --progress -s -p 64 --cookie="remember-mev2=ZHNxYUBvdXRsb29rLmNvbToxNjgyOTQ5MTY1NzQxOmFkNWMzYTNhNWU1NWI3ZDRlZGZkY2NkYzlhMzZhYTZk;" -a "<eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJndWlkIjoiYWJmZDk0M2UtM2JkZS00ZGZlLWFmNWMtMTUzYzRlMjRlYTk5IiwiZXhwIjoxNjgyMzQ0MzY1fQ.xTGoPfpfRh2Tp35dGsk9cgkUwEB_mrao-0ND2v4_AUs>" /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/*.dmg 2>&1 | tee cowtransfer.log
         echo "::warning file=cowtransfer.com::$(cat cowtransfer.log | grep https)"
         echo "::set-output name=url::$(cat cowtransfer.log | grep https | cut -f3 -d" ")"
    
