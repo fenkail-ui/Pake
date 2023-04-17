@@ -2,13 +2,6 @@ name: a test
 on:
   workflow_dispatch:
     inputs:
-      platform:
-        description: "平台（mac专用）"
-        required: true
-        default: "macos-latest"
-        type: choice
-        options:
-        - "macos-latest"
       url:
         description: "[网址,去掉https://和结尾的/]"
         required: true
@@ -58,8 +51,8 @@ on:
 
 jobs:
   build:
-    name: ${{ inputs.platform }}
-    runs-on: ${{ inputs.platform }}
+    name: macos-latest
+    runs-on: macos-latest
     strategy:
       fail-fast: false
 
@@ -134,7 +127,7 @@ jobs:
       env:
         URL: ${{ inputs.url1 }}
         NAME: ${{ inputs.name1 }}
-        ICON: https://api.faviconkit.com/${{ inputs.url }}/144
+        ICON: https://api.faviconkit.com/${{ inputs.url1 }}/144
         HEIGHT: ${{ inputs.height }}
         WIDTH: ${{ inputs.width }}
         TRANSPARENT: ${{ inputs.transparent }}
@@ -151,7 +144,7 @@ jobs:
     - name: Upload archive
       uses: actions/upload-artifact@v3
       with:
-        name: ${{ inputs.name }}-${{ inputs.platform }}.zip
+        name: ${{ inputs.name }}-${{ inputs.name1 }}-macos-latest.zip
         path: node_modules/pake-cli/output/*
         retention-days: 3
 
