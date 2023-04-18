@@ -317,17 +317,36 @@ jobs:
         cd /Users/runner/work/Pake/Pake/node_modules/pake-cli/output/
           mv ${{ inputs.name2 }}.dmg ${{ inputs.name2 }}_1.3.0_x64.dmg
     
-    - name: Upload files
+  #  - name: Upload files
       # arg info: https://github.com/ncipollo/release-action#release-action
-      uses: ncipollo/release-action@v1
-      with:
-        allowUpdates: true
-        prerelease: false
-        artifacts: "node_modules/pake-cli/output/*.*"
-        tag: 1.3.1
-        token: ${{ secrets.GITHUB_TOKEN }}
+   #   uses: ncipollo/release-action@v1
+   #   with:
+   #     allowUpdates: true
+    #    prerelease: false
+    #    artifacts: "node_modules/pake-cli/output/*.*"
+    #    tag: 1.3.1
+     #   token: ${{ secrets.GITHUB_TOKEN }}
         #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+    - name: 创建release标签
+      id: tag
+      #if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+      run: |
+        echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
+        touch release.txt
+        echo "[源码]( )" >> release.txt
+        echo "由衷感谢所有无私奉献的大佬们" >> release.txt
+        echo "📥 软件下载" >> release.txt
+        echo "::set-output name=status::success"
+    - name: 发布至release
+      uses: softprops/action-gh-release@v1
+    #  if: steps.tag.outputs.status == 'success' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: node_modules/pake-cli/output/*    
     
    
     - name: Upload archive
