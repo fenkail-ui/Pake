@@ -1706,7 +1706,6 @@ function mergeTauriConfig(url, options, tauriConf) {
             tauriConf.pake.windows[0].url_type = "web";
         }
         // 处理user-agent
-        logger.warn(userAgent);
         if (userAgent.length > 0) {
             if (process.platform === "win32") {
                 tauriConf.pake.user_agent.windows = userAgent;
@@ -1727,7 +1726,7 @@ function mergeTauriConfig(url, options, tauriConf) {
                 tauriConf.pake.menu.linux = true;
             }
             if (process.platform === "darwin") {
-                tauriConf.pake.user_agent.macos = true;
+                tauriConf.pake.menu.macos = true;
             }
         }
         else {
@@ -1738,7 +1737,7 @@ function mergeTauriConfig(url, options, tauriConf) {
                 tauriConf.pake.menu.linux = false;
             }
             if (process.platform === "darwin") {
-                tauriConf.pake.user_agent.macos = false;
+                tauriConf.pake.menu.macos = false;
             }
         }
         // 处理托盘
@@ -2494,7 +2493,7 @@ class BuilderFactory {
 }
 
 var name = "pake-cli";
-var version = "2.0.0-alpha5";
+var version = "2.0.0-alpha6";
 var description = "🤱🏻 Turn any webpage into a desktop app with Rust. 🤱🏻 很简单的用 Rust 打包网页生成很小的桌面 App。";
 var engines = {
 	node: ">=16.0.0"
