@@ -36,10 +36,10 @@ on:
       
 jobs:
   build:
-    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }} build
     strategy:
       matrix:
-          os: [windows-latest, macos-latest]
+        build: [windows-latest, macos-latest]
       #fail-fast: false
     runs-on: ${{ matrix.os }}
 
@@ -329,7 +329,7 @@ jobs:
         #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: 创建release标签
       id: tag
-      #if: env.UPLOAD_RELEASE == 'true' && !cancelled()
+     # if: matrix.os == 'macos-latest' && !cancelled()
       run: |
         echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
@@ -337,16 +337,26 @@ jobs:
         echo "由衷感谢所有无私奉献的大佬们" >> release.txt
         echo "📥 软件下载" >> release.txt
         echo "::set-output name=status::success"
-    - name: 发布至release
+    - name: mac版发布至release
       uses: softprops/action-gh-release@v1
-    #  if: steps.tag.outputs.status == 'success' && !cancelled()
+      if: matrix.os == 'macos-latest' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        name: macOS_${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-        files: node_modules/pake-cli/output/*    
+        files: node_modules/pake-cli/output/* 
+    - name: win版发布至release
+      uses: softprops/action-gh-release@v1
+      if: matrix.os == 'windows-latest' && !cancelled()
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        name: windows_${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        tag_name: ${{ steps.tag.outputs.release_tag }}
+        body_path: release.txt
+        files: node_modules/pake-cli/output/* 
     
    
     - name: Upload archive
