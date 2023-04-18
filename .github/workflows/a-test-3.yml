@@ -36,7 +36,7 @@ on:
       
 jobs:
   build:
-    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}-${{ matrix.os }}
     strategy:
       matrix:
           os: [windows-latest, macos-latest]
@@ -340,7 +340,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        name: ${{ matrix.os }}-${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: node_modules/pake-cli/output/*    
