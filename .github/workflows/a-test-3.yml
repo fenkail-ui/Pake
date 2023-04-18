@@ -339,7 +339,7 @@ jobs:
         echo "::set-output name=status::success"
     - name: 发布至release
       uses: softprops/action-gh-release@v1
-      if: matrix.os == 'macos-latest'
+     # if: matrix.os == 'macos-latest'
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
