@@ -36,10 +36,10 @@ on:
       
 jobs:
   build:
-    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }} build
+    name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
     strategy:
       matrix:
-        build: [windows-latest, macos-latest]
+          os: [windows-latest, macos-latest]
       #fail-fast: false
     runs-on: ${{ matrix.os }}
 
@@ -76,7 +76,6 @@ jobs:
         choco install wget curl
         choco install imagemagick -y
           refreshenv
-
     - name: install pake-cli local
       shell: bash
       run: |
@@ -98,7 +97,6 @@ jobs:
         curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/32"
         magick convert icon_256.png icon_256.ico
         magick convert icon_32.png icon_32.ico
-
     - name: rust cache restore
       uses: actions/cache/restore@v3
       with:
@@ -216,7 +214,6 @@ jobs:
         curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/32"
         magick convert icon_256.png icon_256.ico
         magick convert icon_32.png icon_32.ico
-
     - name: build 3 with pake-cli in windows
       if:  inputs.url2 != '' && matrix.os == 'windows-latest'
       shell: pwsh
@@ -329,7 +326,7 @@ jobs:
         #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: 创建release标签
       id: tag
-     # if: matrix.os == 'macos-latest' && !cancelled()
+      #if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
         echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
         touch release.txt
@@ -339,14 +336,14 @@ jobs:
         echo "::set-output name=status::success"
     - name: 发布至release
       uses: softprops/action-gh-release@v1
-     # if: matrix.os == 'macos-latest'
+    #  if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: ${{matrix.os}}:${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        name: ${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-        files: node_modules/pake-cli/output/* 
+        files: node_modules/pake-cli/output/*    
     
    
     - name: Upload archive
