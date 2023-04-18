@@ -343,7 +343,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: macOS版：${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        name: macOS版${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: node_modules/pake-cli/output/* 
@@ -353,7 +353,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        name: windows版：${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
+        name: windows版${{ inputs.name }}+${{ inputs.name1 }}+${{ inputs.name2 }}
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
         files: node_modules/pake-cli/output/* 
