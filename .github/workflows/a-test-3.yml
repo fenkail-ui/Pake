@@ -92,9 +92,9 @@ jobs:
       run: | 
         npm list -g --depth=0 | Select-String pake-cli
         cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
-        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/512"
-        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/256" 
-        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/32"
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/512"  || true
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/256"  || true
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url }}/32"  || true
         magick convert icon_256.png icon_256.ico
         magick convert icon_32.png icon_32.ico
     - name: rust cache restore
@@ -164,9 +164,9 @@ jobs:
       run: | 
         npm list -g --depth=0 | Select-String pake-cli
         cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
-        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/512"
-        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/256" 
-        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/32"
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/512"  || true
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/256"  || true
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url1 }}/32"  || true
         magick convert icon_256.png icon_256.ico
         magick convert icon_32.png icon_32.ico
         
@@ -209,9 +209,9 @@ jobs:
       run: | 
         npm list -g --depth=0 | Select-String pake-cli
         cd D:\a\Pake\Pake\node_modules\pake-cli\src-tauri\png\
-        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/512"
-        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/256" 
-        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/32"
+        curl -o icon_512.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/512"  || true
+        curl -o icon_256.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/256"  || true
+        curl -o icon_32.png -f -L "https://api.faviconkit.com/${{ inputs.url2 }}/32"  || true
         magick convert icon_256.png icon_256.ico
         magick convert icon_32.png icon_32.ico
     - name: build 3 with pake-cli in windows
